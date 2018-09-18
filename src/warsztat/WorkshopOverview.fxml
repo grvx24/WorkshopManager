@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.control.cell.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="720.0" prefWidth="1024.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="warsztat.WorkshopOverviewController">
+<AnchorPane id="AnchorPane" prefHeight="720.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="warsztat.WorkshopOverviewController">
   <children>
-    <TableView fx:id="tableView" prefHeight="521.0" prefWidth="996.0" AnchorPane.bottomAnchor="185.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+    <TableView fx:id="tableView" layoutX="14.0" layoutY="14.0" prefHeight="521.0" prefWidth="996.0" AnchorPane.bottomAnchor="185.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
       <columns>
-        <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Nazwa" fx:id="nameColumn">
+        <TableColumn fx:id="nameColumn" maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Nazwa">
           <cellValueFactory>
             <PropertyValueFactory property="nameColumn" />
           </cellValueFactory>
         </TableColumn>
-        <TableColumn prefWidth="100.0" text="Typ" fx:id="typeColumn" />
-        <TableColumn prefWidth="150.0" text="Parametry" fx:id="parametersColumn" />
-        <TableColumn prefWidth="75.0" text="Kod" fx:id="codeColumn" />
-        <TableColumn prefWidth="75.0" resizable="true" text="Ilość" fx:id="quantityColumn" />
-        <TableColumn prefWidth="200.0" text="Zastosowanie" fx:id="usageColumn" />
-        <TableColumn prefWidth="100.0" text="Inne" fx:id="otherColumn" />
-        <TableColumn prefWidth="100.0" text="Brakuje" fx:id="missingColumn" />
+        <TableColumn fx:id="typeColumn" prefWidth="100.0" text="Typ" />
+        <TableColumn fx:id="parametersColumn" prefWidth="150.0" text="Parametry" />
+        <TableColumn fx:id="codeColumn" prefWidth="75.0" text="Kod" />
+        <TableColumn fx:id="quantityColumn" prefWidth="75.0" resizable="true" text="Ilość" />
+        <TableColumn fx:id="usageColumn" prefWidth="200.0" text="Zastosowanie" />
+        <TableColumn fx:id="otherColumn" prefWidth="100.0" text="Inne" />
+        <TableColumn fx:id="missingColumn" prefWidth="100.0" text="Brakuje" />
       </columns>
       <items>
         <FXCollections fx:factory="observableArrayList" />
       </items>
     </TableView>
-    <Button id="addItemButton" mnemonicParsing="false" onAction="#addItemEvent" prefHeight="53.0" prefWidth="196.0" text="Dodaj" AnchorPane.bottomAnchor="132.0" AnchorPane.leftAnchor="14.0">
+    <Button id="addItemButton" layoutX="14.0" layoutY="535.0" mnemonicParsing="false" onAction="#addItemEvent" prefHeight="53.0" prefWidth="196.0" text="Dodaj" AnchorPane.bottomAnchor="132.0" AnchorPane.leftAnchor="14.0">
       <font>
         <Font name="System Bold" size="16.0" fx:id="x1" />
       </font>
     </Button>
-    <Button onAction="#deleteSelectedRows" font="$x1" mnemonicParsing="false" prefHeight="53.0" prefWidth="196.0" text="Usuń zaznaczone" AnchorPane.bottomAnchor="132.0" AnchorPane.rightAnchor="14.0" />
+    <Button font="$x1" layoutX="814.0" layoutY="535.0" mnemonicParsing="false" onAction="#deleteSelectedRows" prefHeight="53.0" prefWidth="196.0" text="Usuń zaznaczone" AnchorPane.bottomAnchor="132.0" AnchorPane.rightAnchor="14.0" />
+      <TextField fx:id="searchTextField" layoutX="414.0" layoutY="588.0" prefHeight="33.0" prefWidth="196.0" />
+      <Button id="addItemButton" layoutX="414.0" layoutY="535.0" mnemonicParsing="false" onAction="#searchByName" prefHeight="53.0" prefWidth="196.0" text="Szukaj">
+         <font>
+            <Font name="System Bold" size="16.0" fx:id="x11" />
+         </font>
+      </Button>
   </children>
 </AnchorPane>
