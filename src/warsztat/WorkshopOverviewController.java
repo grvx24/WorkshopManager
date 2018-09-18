@@ -6,7 +6,9 @@
 package warsztat;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -19,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.stage.Stage;
@@ -32,6 +35,7 @@ public class WorkshopOverviewController implements Initializable {
 
     private DatabaseManager db  = new DatabaseManager("Workshop");
     private ObservableList<PartsDataModel> observableList;
+    private ObservableList<PartsDataModel> editableList;
     
 
    
@@ -44,6 +48,8 @@ public class WorkshopOverviewController implements Initializable {
     @FXML private TableColumn<PartsDataModel,String> usageColumn;
     @FXML private TableColumn<PartsDataModel,String> otherColumn;
     @FXML private TableColumn<PartsDataModel,String> missingColumn;
+    
+    @FXML private TextField searchTextField;
     
     
     @FXML protected void addItemEvent(ActionEvent event)
@@ -71,8 +77,6 @@ public class WorkshopOverviewController implements Initializable {
     {
         ObservableList<PartsDataModel> itemsToRemove = tableView.getSelectionModel().getSelectedItems();
         
-        tableView.getItems().removeAll(itemsToRemove);
-        
         try {
         
             for(PartsDataModel item : itemsToRemove)
@@ -83,6 +87,20 @@ public class WorkshopOverviewController implements Initializable {
             throw e;
         }
         
+        tableView.getItems().removeAll(itemsToRemove);
+
+    }
+    
+    @FXML protected void searchByName(ActionEvent event){
+        
+        String text = searchTextField.getText();
+        List<PartsDataModel> tempList = observableList.stream()
+                .filter(model->model.getName().contains(text))
+                .collect(Collectors.toList());
+        
+        editableList = FXCollections.observableArrayList(tempList);
+        tableView.setItems(editableList);
+
         
     }
     
