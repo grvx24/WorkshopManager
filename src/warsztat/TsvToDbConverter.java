@@ -17,7 +17,7 @@ import java.sql.SQLException;
 public class TsvToDbConverter {
     
     public static void ConvertFromTsvToMainWorkshop() throws SQLException{
-        DatabaseManager db = new DatabaseManager("MainWorkshop");
+        DatabaseManager db = new DatabaseManager("Workshop");
         
         BufferedReader reader;
         try {
@@ -25,13 +25,12 @@ public class TsvToDbConverter {
                     "mag.tsv"));
             String line = reader.readLine();
             while (line != null) {
-                //System.out.println(line);
+                System.out.println(line);
                 
                 String[] parts=line.split("\t");
                 PartsDataModel model = new PartsDataModel(0,"","","","",0,"","","");
                 
                 for (int i = 0; i < parts.length; i++) {
-                    System.out.print(parts[i]+" ");
                     switch(i)
                     {
                         case 0:
@@ -71,10 +70,9 @@ public class TsvToDbConverter {
                             }
                             break;
                         }
-                    }
-                    
-                    db.AddItem(model);
+                    }                  
                 }
+                db.AddItem(model);
                 // read next line
                 line = reader.readLine();
             }

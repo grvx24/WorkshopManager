@@ -6,11 +6,14 @@
 package warsztat;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.FutureTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
@@ -197,7 +200,6 @@ public class WorkshopOverviewController implements Initializable {
         initTable();
         initCategoryCombobox();
         loadData();
-        
     }
 
     private void initTable(){

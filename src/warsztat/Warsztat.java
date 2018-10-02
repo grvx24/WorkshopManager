@@ -42,7 +42,6 @@ public class Warsztat extends Application {
             }
         });
         
-        
     }
 
     /**
@@ -50,6 +49,7 @@ public class Warsztat extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+        
     }
     
 }
