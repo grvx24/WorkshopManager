@@ -2,16 +2,23 @@
 
 <?import javafx.collections.FXCollections?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="720.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="warsztat.WorkshopOverviewController">
+<AnchorPane id="AnchorPane" prefHeight="900.0" prefWidth="1600.0" stylesheets="@WorkshopOverview.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="warsztat.WorkshopOverviewController">
   <children>
-    <TableView fx:id="tableView" layoutX="14.0" layoutY="14.0" prefHeight="521.0" prefWidth="996.0" AnchorPane.bottomAnchor="185.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
+    <TableView fx:id="tableView" layoutX="14.0" layoutY="185.0" prefHeight="701.0" prefWidth="928.0" style="-fx-border-color: #0000FF;" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="658.0" AnchorPane.topAnchor="185.0">
       <columns>
         <TableColumn fx:id="nameColumn" maxWidth="5000.0" minWidth="10.0" prefWidth="100.0" text="Nazwa">
           <cellValueFactory>
@@ -23,24 +30,113 @@
         <TableColumn fx:id="codeColumn" prefWidth="75.0" text="Kod" />
         <TableColumn fx:id="quantityColumn" prefWidth="75.0" resizable="true" text="Ilość" />
         <TableColumn fx:id="usageColumn" prefWidth="200.0" text="Zastosowanie" />
-        <TableColumn fx:id="otherColumn" prefWidth="100.0" text="Inne" />
-        <TableColumn fx:id="missingColumn" prefWidth="100.0" text="Brakuje" />
+        <TableColumn fx:id="otherColumn" prefWidth="120.0" text="Inne" />
+        <TableColumn fx:id="missingColumn" prefWidth="100.0" resizable="false" text="Brakuje" />
       </columns>
       <items>
         <FXCollections fx:factory="observableArrayList" />
       </items>
     </TableView>
-    <Button id="addItemButton" layoutX="14.0" layoutY="535.0" mnemonicParsing="false" onAction="#addItemEvent" prefHeight="53.0" prefWidth="196.0" text="Dodaj" AnchorPane.bottomAnchor="132.0" AnchorPane.leftAnchor="14.0">
-      <font>
-        <Font name="System Bold" size="16.0" fx:id="x1" />
-      </font>
-    </Button>
-    <Button font="$x1" layoutX="814.0" layoutY="535.0" mnemonicParsing="false" onAction="#deleteSelectedRows" prefHeight="53.0" prefWidth="196.0" text="Usuń zaznaczone" AnchorPane.bottomAnchor="132.0" AnchorPane.rightAnchor="14.0" />
-      <TextField fx:id="searchTextField" layoutX="414.0" layoutY="588.0" prefHeight="33.0" prefWidth="196.0" />
-      <Button id="addItemButton" layoutX="414.0" layoutY="535.0" mnemonicParsing="false" onAction="#searchByName" prefHeight="53.0" prefWidth="196.0" text="Szukaj">
-         <font>
-            <Font name="System Bold" size="16.0" fx:id="x11" />
-         </font>
-      </Button>
+      <AnchorPane layoutX="964.0" layoutY="185.0" prefHeight="344.0" prefWidth="616.0" styleClass="controls-background" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="185.0">
+         <children>
+            <Button id="SearchButton" layoutX="15.0" layoutY="107.0" mnemonicParsing="false" onAction="#searchByCategory" prefHeight="44.0" prefWidth="295.0" text="Szukaj" AnchorPane.rightAnchor="307.0" AnchorPane.topAnchor="106.0">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+            <TextField fx:id="searchTextField" layoutX="15.0" layoutY="57.0" prefHeight="37.0" prefWidth="295.0" AnchorPane.rightAnchor="306.0" AnchorPane.topAnchor="57.0">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </TextField>
+            <Label layoutX="16.0" layoutY="16.0" prefHeight="30.0" prefWidth="585.0" text="Wyszukiwanie" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="15.0">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="categoryComboBox" layoutX="323.0" layoutY="58.0" prefHeight="37.0" prefWidth="276.0" promptText="Wybierz kategorię" AnchorPane.rightAnchor="17.0" AnchorPane.topAnchor="58.0" />
+            <Label layoutX="17.0" layoutY="157.0" prefHeight="30.0" prefWidth="585.0" text="Opcje" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="157.0">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <Button id="AddButton" layoutX="16.0" layoutY="196.0" mnemonicParsing="false" onAction="#addItemEvent" prefHeight="44.0" prefWidth="295.0" styleClass="AddButton" text="Dodaj przedmiot" AnchorPane.rightAnchor="306.0" AnchorPane.topAnchor="195.0">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+            <Button id="RemoveButton" layoutX="15.0" layoutY="288.0" mnemonicParsing="false" onAction="#deleteSelectedRows" prefHeight="44.0" prefWidth="295.0" text="Usuń zaznaczone" AnchorPane.rightAnchor="307.0" AnchorPane.topAnchor="287.0">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Button>
+         </children></AnchorPane>
+      <AnchorPane layoutX="964.0" layoutY="542.0" prefHeight="344.0" prefWidth="616.0" styleClass="controls-background" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="20.0">
+         <children>
+            <Label layoutX="16.0" layoutY="14.0" prefHeight="30.0" prefWidth="585.0" text="Informacje">
+               <font>
+                  <Font name="System Bold" size="20.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="44.0" prefHeight="25.0" prefWidth="561.0" text="Liczba rekordów w tabeli">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="uniqueItemsCount" layoutX="14.0" layoutY="69.0" prefHeight="25.0" prefWidth="154.0" text="0">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="94.0" prefHeight="25.0" prefWidth="561.0" text="Suma wszystkich przedmiotów">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="sumLabel" layoutX="14.0" layoutY="119.0" prefHeight="25.0" prefWidth="154.0" text="0">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label layoutX="14.0" layoutY="147.0" prefHeight="25.0" prefWidth="561.0" text="Liczba brakujących przedmiotów">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="missingItemsSumLabel" layoutX="14.0" layoutY="172.0" prefHeight="25.0" prefWidth="154.0" text="todo">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+            <Label fx:id="infoLoadingLabel" layoutX="16.0" layoutY="305.0" prefHeight="25.0" prefWidth="585.0" text="Trwa aktualizacja informacji...">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children></AnchorPane>
+      <ImageView fitHeight="150.0" fitWidth="1566.0" layoutX="50.0" layoutY="27.0" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="27.0">
+         <image>
+            <Image url="@WorkshopTitle.png" />
+         </image>
+      </ImageView>
+      <MenuBar disable="true" layoutY="2.0" prefHeight="25.0" prefWidth="1600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
   </children>
 </AnchorPane>

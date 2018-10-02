@@ -6,11 +6,17 @@
 package warsztat;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.concurrent.FutureTask;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +24,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -37,7 +46,8 @@ public class WorkshopOverviewController implements Initializable {
     private ObservableList<PartsDataModel> observableList;
     private ObservableList<PartsDataModel> editableList;
     
-
+    public static final String missingTrueText = "Tak"; 
+    public static final String missingFalseText = "Nie";
    
     @FXML private TableView<PartsDataModel> tableView;
     @FXML private TableColumn<PartsDataModel,String> nameColumn;
@@ -49,7 +59,13 @@ public class WorkshopOverviewController implements Initializable {
     @FXML private TableColumn<PartsDataModel,String> otherColumn;
     @FXML private TableColumn<PartsDataModel,String> missingColumn;
     
+    @FXML private Label uniqueItemsCount;
+    @FXML private Label sumLabel;
+    @FXML private Label missingItemsSumLabel;
     @FXML private TextField searchTextField;
+    @FXML private ComboBox categoryComboBox;
+    
+    @FXML private Label infoLoadingLabel;
     
     
     @FXML protected void addItemEvent(ActionEvent event)
@@ -66,11 +82,13 @@ public class WorkshopOverviewController implements Initializable {
             stage.setResizable(false);
             AddItemWindowController controller = loader.getController();
             controller.setObservabliList(observableList);
+            controller.setParentController(this);
             stage.show();
             
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
     }
     
     @FXML protected void deleteSelectedRows(ActionEvent event)
@@ -84,31 +102,102 @@ public class WorkshopOverviewController implements Initializable {
                 db.DeleteItem(item);
             }
         } catch (Exception e) {
-            throw e;
+            e.printStackTrace();
         }
         
         tableView.getItems().removeAll(itemsToRemove);
-
+        
+        initInformationsAsync();
     }
     
-    @FXML protected void searchByName(ActionEvent event){
+    @FXML protected void searchByCategory(ActionEvent event){
         
+        int selectedIndex=categoryComboBox.getSelectionModel().getSelectedIndex();
         String text = searchTextField.getText();
-        List<PartsDataModel> tempList = observableList.stream()
-                .filter(model->model.getName().contains(text))
-                .collect(Collectors.toList());
+        
+        if(text.isEmpty()||text==null){
+            tableView.setItems(observableList);
+            return;
+        }
+        
+        List<PartsDataModel> tempList = observableList;
+        
+        try
+        {
+            switch(selectedIndex){
+                case 0:
+                {
+                    tempList=observableList.stream()
+                    .filter(model->model.getName().contains(text))
+                    .collect(Collectors.toList());                   
+                    break;
+                }
+                case 1:
+                {
+                    tempList=observableList.stream()
+                    .filter(model->model.getType().contains(text))
+                    .collect(Collectors.toList());                
+                    break;
+                }
+                case 2:
+                {
+                    tempList=observableList.stream()
+                    .filter(model->model.getParameters().contains(text))
+                    .collect(Collectors.toList());               
+                    break;
+                }
+                case 3:
+                {
+                    tempList=observableList.stream()
+                    .filter(model->model.getCode().contains(text))
+                    .collect(Collectors.toList());                
+                    break;
+                }
+                case 4:
+                {
+                    tempList=observableList.stream()
+                    .filter(model->model.getQuantity()==Integer.parseInt(text))
+                    .collect(Collectors.toList());                
+                    break;
+                }
+                case 5:
+                {
+                    tempList=observableList.stream()
+                    .filter(model->model.getUsage().contains(text))
+                    .collect(Collectors.toList());                
+                    break;
+                }
+                case 6:
+                {
+                    tempList=observableList.stream()
+                    .filter(model->model.getOther().contains(text))
+                    .collect(Collectors.toList());                
+                    break;
+                }
+            }
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            return;
+        }  
+        
+        System.out.println(selectedIndex);
         
         editableList = FXCollections.observableArrayList(tempList);
         tableView.setItems(editableList);
+    }
+        
 
         
-    }
-    
+
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
     
+        initControls();
         initTable();
+        initCategoryCombobox();
         loadData();
+        
     }
 
     private void initTable(){
@@ -130,7 +219,57 @@ public class WorkshopOverviewController implements Initializable {
         
         editableCols();
         
-    }   
+    }
+    
+    public void initInformationsAsync(){
+
+        Platform.runLater(new Runnable(){
+            @Override
+            public void run(){
+                infoLoadingLabel.setVisible(true);
+                setUniqueItemsLabel();
+                setSumLabel();
+                setMissingItemsSumLabel();
+                infoLoadingLabel.setVisible(false);
+            }
+        });
+    }
+    
+    private void setUniqueItemsLabel(){
+        Integer uniqueItems = observableList.size();
+        uniqueItemsCount.setText(uniqueItems.toString());
+    }
+    
+    private void setSumLabel(){
+        Integer sum = countSumOfAllItems();
+        sumLabel.setText(sum.toString());
+    }
+    
+    private void setMissingItemsSumLabel(){
+        Integer sum = countMissingItems();
+        
+        missingItemsSumLabel.setText(sum.toString()+"/"+observableList.size());
+    }
+    
+    
+    private int countSumOfAllItems(){
+        
+        Integer total = 0;
+        
+        for(PartsDataModel item : observableList){
+            total+=item.getQuantity();
+        }
+        return total;
+    }
+    
+    private int countMissingItems(){
+        List<PartsDataModel> missingItems =observableList
+                .stream()
+                .filter(m->m.getMissing()==missingTrueText)
+                .collect(Collectors.toList());
+        
+        return missingItems.size();
+    }
     
     private void editableCols(){
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -181,7 +320,16 @@ public class WorkshopOverviewController implements Initializable {
             PartsDataModel data = e.getTableView().getItems().get(e.getTablePosition().getRow());
             data.setQuantity(e.getNewValue());
             
+            if(data.getQuantity()>0){
+                data.setMissing(missingFalseText);
+            }else{
+                data.setMissing(missingTrueText);
+            }
+            
             db.EditItem(data);
+            tableView.refresh();
+            
+            initInformationsAsync();
         });
             
         usageColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -204,23 +352,42 @@ public class WorkshopOverviewController implements Initializable {
             db.EditItem(data);
         });
                
-        missingColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        
-        missingColumn.setOnEditCommit(e->
-        {
-            PartsDataModel data = e.getTableView().getItems().get(e.getTablePosition().getRow());
-            data.setMissing(e.getNewValue());
-            
-            db.EditItem(data);
-        });
+//        missingColumn.setCellFactory(TextFieldTableCell.forTableColumn());
+//        
+//        missingColumn.setOnEditCommit(e->
+//        {
+//            PartsDataModel data = e.getTableView().getItems().get(e.getTablePosition().getRow());
+//            data.setMissing(e.getNewValue());
+//            
+//            db.EditItem(data);
+//        });
         
         tableView.setEditable(true);
+
+    }
+    
+    private void changeMissingColumn(int value){
 
     }
     
     private void loadData(){
         observableList = FXCollections.observableArrayList(db.GetAllItems());
         tableView.setItems(observableList);
+    }
+    
+    private void initCategoryCombobox(){
+        int columnsSize=tableView.getColumns().size(); 
+
+        for (int i = 0; i < columnsSize-1; i++) {
+            categoryComboBox.getItems().add(tableView.getColumns().get(i).textProperty().getValue());            
+        }
+        categoryComboBox.getSelectionModel().selectFirst();
+    }
+    
+    private void initControls(){
+        infoLoadingLabel.setVisible(false);
+        initInformationsAsync();
+
     }
  
 }

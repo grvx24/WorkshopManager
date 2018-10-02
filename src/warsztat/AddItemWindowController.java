@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 /**
@@ -27,12 +28,12 @@ public class AddItemWindowController implements Initializable {
     @FXML private TextField paramsTF;
     @FXML private TextField codeTF;
     @FXML private TextField quantityTF;
-    @FXML private TextField usageTF;
+    @FXML private TextArea usageTF;
     @FXML private TextField otherTF;
     @FXML private TextField missingTF;
     
     
-    
+    private WorkshopOverviewController parentController;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -60,6 +61,10 @@ public class AddItemWindowController implements Initializable {
         try {
             
             int quantity = Integer.parseInt(quantityTF.getText());
+            String missing = (quantity >0)?
+                    WorkshopOverviewController.missingFalseText
+                    :WorkshopOverviewController.missingTrueText;
+            
             String name = nameTF.getText();
             if(name.isEmpty())
             {
@@ -69,14 +74,13 @@ public class AddItemWindowController implements Initializable {
             PartsDataModel item = new PartsDataModel(0,name ,
             typeTF.getText(), paramsTF.getText(),
             codeTF.getText(), quantity,
-                    usageTF.getText(), otherTF.getText(), missingTF.getText());
+                    usageTF.getText(), otherTF.getText(),missing);
+            
             
             DatabaseManager db = new DatabaseManager("Workshop");
             db.AddItem(item);        
             observableList.add(item);
-            //TODO
-            //NAPRAWIĆ ID PRZEDMIOTÓW!!!
-            
+            parentController.initInformationsAsync();
 
                 Alert alert = new Alert(AlertType.INFORMATION);
                 alert.setTitle("Powiadomienie");
@@ -94,6 +98,10 @@ public class AddItemWindowController implements Initializable {
     
     public void setObservabliList(ObservableList<PartsDataModel> list){
         this.observableList = list;
+    }
+    
+    public void setParentController(WorkshopOverviewController controller){
+        this.parentController = controller;
     }
     
     

@@ -90,7 +90,7 @@ public class DatabaseManager implements IDatabaseInterface{
         String updateSQL = "UPDATE MainWorkshop "
                 + "SET Name=?,Type=?,Parameters=?,Code=?,Quantity=?,Usage=?,"
                 + "Other=?,Missing=?"
-                + "WHERE ID=?";
+                + "WHERE Name=?";
         
         System.out.println(parts.getName());
         
@@ -106,7 +106,7 @@ public class DatabaseManager implements IDatabaseInterface{
             preparedStatement.setString(6, parts.getUsage());
             preparedStatement.setString(7, parts.getOther());
             preparedStatement.setString(8, parts.getMissing());
-            preparedStatement.setInt(9, parts.getID());
+            preparedStatement.setString(9, parts.getName());
             preparedStatement.executeUpdate();
 
             if (preparedStatement != null) {
